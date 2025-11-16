@@ -1,0 +1,13 @@
+diff -up libpiper-2024.11.27/CMakeLists.txt.omv~ libpiper-2024.11.27/CMakeLists.txt
+--- libpiper-2024.11.27/CMakeLists.txt.omv~	2025-11-16 21:09:55.841003961 +0100
++++ libpiper-2024.11.27/CMakeLists.txt	2025-11-16 21:11:37.990853739 +0100
+@@ -18,6 +18,9 @@ elseif(NOT APPLE)
+ endif()
+ 
+ add_library(piper SHARED src/cpp/piper.cpp src/cpp/piper_c.cpp)
++# Let's set the SOVERSION to something ridiculous so we're less likely to clash
++# with the upstream project's library with a completely different API
++set_target_properties(piper PROPERTIES VERSION 2024.11.27 SOVERSION 2024)
+ 
+ add_executable(piper_exe src/cpp/main.cpp)
+ add_executable(test_piper src/cpp/test.cpp)

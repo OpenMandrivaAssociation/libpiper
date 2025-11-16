@@ -1,0 +1,117 @@
+diff -up libpiper-2024.11.27/CMakeLists.txt.1~ libpiper-2024.11.27/CMakeLists.txt
+--- libpiper-2024.11.27/CMakeLists.txt.1~	2024-11-27 00:15:19.000000000 +0100
++++ libpiper-2024.11.27/CMakeLists.txt	2025-11-16 20:45:44.137413609 +0100
+@@ -4,7 +4,7 @@ project(piper C CXX)
+ 
+ file(STRINGS "${CMAKE_CURRENT_LIST_DIR}/VERSION" piper_version)
+ 
+-set(CMAKE_CXX_STANDARD 17)
++set(CMAKE_CXX_STANDARD 20)
+ set(CMAKE_CXX_STANDARD_REQUIRED ON)
+ 
+ if(MSVC)
+@@ -27,6 +27,8 @@ add_executable(test_piper src/cpp/test.c
+ 
+ # ---- fmt ---
+ 
++option(SYSTEM_FMT "Use system fmt library" ON)
++if(NOT SYSTEM_FMT)
+ if(NOT DEFINED FMT_DIR)
+   set(FMT_VERSION "10.0.0")
+   set(FMT_DIR "${CMAKE_CURRENT_BINARY_DIR}/fi")
+@@ -42,9 +44,14 @@ if(NOT DEFINED FMT_DIR)
+   add_dependencies(piper fmt_external)
+   add_dependencies(test_piper fmt_external)
+ endif()
++endif()
+ 
+ # ---- spdlog ---
+ 
++option(SYSTEM_SPDLOG "Use system spdlog library" ON)
++if(SYSTEM_SPDLOG)
++  add_definitions(-DSPDLOG_USE_STD_FORMAT=1)
++else()
+ if(NOT DEFINED SPDLOG_DIR)
+   set(SPDLOG_DIR "${CMAKE_CURRENT_BINARY_DIR}/si")
+   set(SPDLOG_VERSION "1.12.0")
+@@ -57,9 +64,14 @@ if(NOT DEFINED SPDLOG_DIR)
+   add_dependencies(piper spdlog_external)
+   add_dependencies(test_piper spdlog_external)
+ endif()
++endif()
+ 
+ # ---- piper-phonemize ---
+ 
++option(SYSTEM_PIPER_PHONEMIZE "Use system piper_phonemize library" ON)
++if(SYSTEM_PIPER_PHONEMIZE)
++  include_directories(/usr/include/onnxruntime)
++else()
+ if(NOT DEFINED PIPER_PHONEMIZE_DIR)
+   set(PIPER_PHONEMIZE_DIR "${CMAKE_CURRENT_BINARY_DIR}/pi")
+   ExternalProject_Add(
+@@ -71,6 +83,7 @@ if(NOT DEFINED PIPER_PHONEMIZE_DIR)
+   add_dependencies(piper piper_phonemize_external)
+   add_dependencies(test_piper piper_phonemize_external)
+ endif()
++endif()
+ 
+ # ---- Declare executable ----
+ 
+@@ -78,7 +91,7 @@ if((NOT MSVC) AND (NOT APPLE))
+   # Linux flags
+   string(APPEND CMAKE_CXX_FLAGS " -Wall -Wextra -Wl,-rpath,'$ORIGIN'")
+   string(APPEND CMAKE_C_FLAGS " -Wall -Wextra")
+-  target_link_libraries(piper_exe -static-libgcc -static-libstdc++)
++  #target_link_libraries(piper_exe -static-libgcc -static-libstdc++)
+ 
+   set(PIPER_EXTRA_LIBRARIES "pthread")
+ endif()
+@@ -157,6 +170,7 @@ install(
+   DESTINATION ${CMAKE_INSTALL_PREFIX}/include/piper)
+ 
+ # Dependencies
++if(NOT SYSTEM_PIPER_PHONEMIZE)
+ install(
+   DIRECTORY ${PIPER_PHONEMIZE_DIR}/bin/
+   DESTINATION ${CMAKE_INSTALL_PREFIX}
+@@ -184,3 +198,4 @@ install(
+   FILES ${PIPER_PHONEMIZE_DIR}/share/libtashkeel_model.ort
+   DESTINATION ${CMAKE_INSTALL_PREFIX}
+ )
++endif()
+diff -up libpiper-2024.11.27/src/cpp/main.cpp.1~ libpiper-2024.11.27/src/cpp/main.cpp
+--- libpiper-2024.11.27/src/cpp/main.cpp.1~	2024-11-27 00:15:19.000000000 +0100
++++ libpiper-2024.11.27/src/cpp/main.cpp	2025-11-16 19:50:29.732457320 +0100
+@@ -32,7 +32,7 @@
+ #include <spdlog/sinks/stdout_color_sinks.h>
+ #include <spdlog/spdlog.h>
+ 
+-#include "json.hpp"
++#include <nlohmann/json.hpp>
+ #include "piper.hpp"
+ 
+ using namespace std;
+diff -up libpiper-2024.11.27/src/cpp/piper.cpp.1~ libpiper-2024.11.27/src/cpp/piper.cpp
+--- libpiper-2024.11.27/src/cpp/piper.cpp.1~	2024-11-27 00:15:19.000000000 +0100
++++ libpiper-2024.11.27/src/cpp/piper.cpp	2025-11-16 19:50:29.732528193 +0100
+@@ -10,7 +10,7 @@
+ #include <spdlog/spdlog.h>
+ #include <piper-phonemize/tashkeel.hpp>
+ 
+-#include "json.hpp"
++#include <nlohmann/json.hpp>
+ #include "piper.hpp"
+ #include "utf8.h"
+ #include "wavfile.hpp"
+diff -up libpiper-2024.11.27/src/cpp/test.cpp.1~ libpiper-2024.11.27/src/cpp/test.cpp
+--- libpiper-2024.11.27/src/cpp/test.cpp.1~	2024-11-27 00:15:19.000000000 +0100
++++ libpiper-2024.11.27/src/cpp/test.cpp	2025-11-16 19:50:29.732584189 +0100
+@@ -6,7 +6,7 @@
+ #include <string>
+ #include <vector>
+ 
+-#include "json.hpp"
++#include <nlohmann/json.hpp>
+ #include "piper.hpp"
+ 
+ using namespace std;

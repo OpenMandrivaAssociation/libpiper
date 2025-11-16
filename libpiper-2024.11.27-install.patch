@@ -1,0 +1,22 @@
+diff -up libpiper-2024.11.27/CMakeLists.txt.omv~ libpiper-2024.11.27/CMakeLists.txt
+--- libpiper-2024.11.27/CMakeLists.txt.omv~	2025-11-16 21:14:52.894240642 +0100
++++ libpiper-2024.11.27/CMakeLists.txt	2025-11-16 21:16:12.229786768 +0100
+@@ -162,15 +162,15 @@ target_link_libraries(test_piper PUBLIC
+ 
+ install(
+   TARGETS piper
+-  DESTINATION ${CMAKE_INSTALL_PREFIX})
++  DESTINATION ${CMAKE_INSTALL_BINDIR})
+ 
+ install(
+   TARGETS piper_exe
+-  DESTINATION ${CMAKE_INSTALL_PREFIX})
++  DESTINATION ${CMAKE_INSTALL_LIBDIR})
+ 
+ install(
+   FILES src/cpp/piper.hpp src/cpp/piper_c.h
+-  DESTINATION ${CMAKE_INSTALL_PREFIX}/include/piper)
++  DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/piper)
+ 
+ # Dependencies
+ if(NOT SYSTEM_PIPER_PHONEMIZE)
