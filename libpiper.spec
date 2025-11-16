@@ -15,6 +15,8 @@ BuildSystem:	cmake
 BuildOption:	-DCMAKE_INSTALL_LIBDIR=%{_lib}
 BuildOption:	-DCMAKE_INSTALL_INCLUDEDIR=include
 BuildRequires:	%mklibname -d piper_phonemize
+BuildRequires:	pkgconfig(spdlog)
+BuildRequires:	pkgconfig(espeak-ng)
 
 %patchlist
 # From https://github.com/shaunren/piper/tree/library
