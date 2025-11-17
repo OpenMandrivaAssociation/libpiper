@@ -17,6 +17,7 @@ BuildOption:	-DCMAKE_INSTALL_INCLUDEDIR=include
 BuildRequires:	%mklibname -d piper_phonemize
 BuildRequires:	pkgconfig(spdlog)
 BuildRequires:	pkgconfig(espeak-ng)
+BuildRequires:	pkgconfig(libonnxruntime)
 
 %patchlist
 # From https://github.com/shaunren/piper/tree/library
