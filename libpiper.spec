@@ -5,7 +5,7 @@
 
 Name:		libpiper
 Version:	2024.11.27
-Release:	1
+Release:	2
 Source0:	https://github.com/rhasspy/piper/archive/refs/heads/master.tar.gz#/%{name}-%{version}.tar.gz
 Summary:	Fork of the Piper TTS system used by Proton
 URL:		https://github.com/shaunren/piper/tree/library
@@ -17,7 +17,7 @@ BuildOption:	-DCMAKE_INSTALL_INCLUDEDIR=include
 BuildRequires:	%mklibname -d piper_phonemize
 BuildRequires:	pkgconfig(spdlog)
 BuildRequires:	pkgconfig(espeak-ng)
-BuildRequires:	pkgconfig(libonnxruntime)
+BuildRequires:	pkgconfig(libonnxruntime) >= 1.28.0
 
 %patchlist
 # From https://github.com/shaunren/piper/tree/library
